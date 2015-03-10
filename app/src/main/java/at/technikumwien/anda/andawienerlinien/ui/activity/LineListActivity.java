@@ -1,4 +1,4 @@
-package at.technikumwien.anda.andawienerlinien;
+package at.technikumwien.anda.andawienerlinien.ui.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import at.technikumwien.anda.andawienerlinien.R;
 
 
 public class LineListActivity extends ActionBarActivity {
