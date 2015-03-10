@@ -3,4 +3,4 @@
     android:id="@+id/listView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="at.technikumwien.anda.andawienerlinien.ui.activity.LineListActivity"/>
+    tools:context="at.technikumwien.anda.wienerlinien.ui.activity.LineListActivity"/>

@@ -1,4 +1,4 @@
-package at.technikumwien.anda.andawienerlinien;
+package at.technikumwien.anda.wienerlinien;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

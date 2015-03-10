@@ -1,5 +1,7 @@
-package at.technikumwien.anda.andawienerlinien.ui.activity;
+package at.technikumwien.anda.wienerlinien.ui.activity;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -14,7 +16,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.technikumwien.anda.andawienerlinien.R;
+import at.technikumwien.anda.wienerlinien.R;
+import at.technikumwien.anda.wienerlinien.model.Line;
 
 
 public class LineListActivity extends ActionBarActivity {
@@ -36,13 +39,13 @@ public class LineListActivity extends ActionBarActivity {
         ListView listView = (ListView) findViewById(R.id.listView);
 
         // Create hard-coded list of lines
-        ArrayList<String> lines = new ArrayList<>();
-        lines.add("U1");
-        lines.add("U2");
-        lines.add("U3");
-        lines.add("U4");
-        lines.add("U6");
-        lines.add("31");
+        ArrayList<Line> lines = new ArrayList<>();
+        lines.add(new Line("U1", Color.parseColor("#E20A16")));
+        lines.add(new Line("U2", Color.parseColor("#764785")));
+        lines.add(new Line("U3", Color.parseColor("#F76013")));
+        lines.add(new Line("U4", Color.parseColor("#008131")));
+        lines.add(new Line("U6", Color.parseColor("#88471F")));
+        lines.add(new Line("31", Color.parseColor("#999999")));
 
         // Create an set adapter for displaying the lines
         LineAdapter adapter = new LineAdapter(lines);
@@ -85,13 +88,13 @@ public class LineListActivity extends ActionBarActivity {
         // Private members
         // =============================================================================
 
-        private List<String> lines;
+        private List<Line> lines;
 
         // =============================================================================
         // Constructor
         // =============================================================================
 
-        public LineAdapter(List<String> lines) {
+        public LineAdapter(List<Line> lines) {
             if (lines == null) {
                 throw new NullPointerException("lines has to be an initialized List object");
             }
@@ -107,7 +110,7 @@ public class LineListActivity extends ActionBarActivity {
             return lines.size();
         }
 
-        @Override public String getItem(int position) {
+        @Override public Line getItem(int position) {
             return lines.get(position);
         }
 
@@ -123,10 +126,17 @@ public class LineListActivity extends ActionBarActivity {
                 view = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_line, parent, false);
             }
 
+            final Line line = getItem(position);
+
             // Set line name
-            view.setText(getItem(position));
+            view.setText(line.getName());
+
+            // set line color
+            view.setBackground(new ColorDrawable(line.getColor()));
 
             return view;
         }
+
     }
+
 }
