@@ -1,6 +1,7 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/listView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="at.technikumwien.anda.wienerlinien.ui.activity.LineListActivity"/>
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/line_list"
+    android:name="at.technikumwien.anda.wienerlinien.ui.activity.LineListFragment"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_marginLeft="16dp" android:layout_marginRight="16dp"
+    tools:context="at.technikumwien.anda.wienerlinien.ui.activity.LineListActivity"
+    tools:layout="@android:layout/list_content" />

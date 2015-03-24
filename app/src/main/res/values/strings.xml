@@ -4,4 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_line_list">LineListActivity</string>
+    <string name="title_line_list">Lines</string>
+    <string name="title_line_detail">Line Detail</string>
 </resources>
