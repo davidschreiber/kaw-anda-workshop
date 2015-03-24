@@ -2,10 +2,7 @@ package at.technikumwien.anda.wienerlinien.model;
 
 import java.util.List;
 
-/**
- * A Wiener Linien line.
- */
-public class Line {
+public class Station {
 
     // =============================================================================
     // Private members
@@ -13,33 +10,43 @@ public class Line {
 
     private String name;
 
-    private int color;
+    private long latitude;
 
-    private List<Station> stations;
+    private long longitude;
+
+    /**
+     * Umstiegsmöglichkeiten
+     */
+    private List<Line> transferLines;
 
     // =============================================================================
     // Constructor
     // =============================================================================
 
-    public Line(String name, int color, List<Station> stations) {
+    public Station(String name, long latitude, long longitude, List<Line> transferLines) {
         this.name = name;
-        this.color = color;
-        this.stations = stations;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.transferLines = transferLines;
     }
 
     // =============================================================================
-    // Getters
+    // Getter
     // =============================================================================
 
     public String getName() {
         return name;
     }
 
-    public int getColor() {
-        return color;
+    public long getLatitude() {
+        return latitude;
     }
 
-    public List<Station> getStations() {
-        return stations;
+    public long getLongitude() {
+        return longitude;
+    }
+
+    public List<Line> getTransferLines() {
+        return transferLines;
     }
 }
