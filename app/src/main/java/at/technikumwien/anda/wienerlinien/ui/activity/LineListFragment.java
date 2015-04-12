@@ -1,7 +1,6 @@
 package at.technikumwien.anda.wienerlinien.ui.activity;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,12 +12,11 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import at.technikumwien.anda.wienerlinien.Database;
 import at.technikumwien.anda.wienerlinien.R;
 import at.technikumwien.anda.wienerlinien.model.Line;
-import at.technikumwien.anda.wienerlinien.ui.activity.dummy.DummyContent;
 
 /**
  * A list fragment representing a list of Lines. This fragment
@@ -57,7 +55,7 @@ public class LineListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        void onItemSelected(String id);
     }
 
     /**
@@ -85,7 +83,7 @@ public class LineListFragment extends ListFragment {
 
 
         // Create an set adapter for displaying the lines
-        LineAdapter adapter = new LineAdapter(lines);
+        LineAdapter adapter = new LineAdapter(new Database().getLines());
 
         // Provide list view with line adapter
         setListAdapter(adapter);
@@ -125,10 +123,6 @@ public class LineListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
     }
 
     @Override
