@@ -7,6 +7,9 @@ android {
     android {
         packagingOptions {
             exclude 'LICENSE.txt'
+            exclude 'META-INF/LICENSE'
+            exclude 'META-INF/NOTICE'
+            exclude 'META-INF/services/com.fasterxml.jackson.core.JsonFactory'
         }
     }
     
@@ -29,6 +32,9 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.0.0'
     compile 'com.android.support:support-v4:22.0.0'
+
+    // CSV parsing
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.5.2'
 
     androidTestCompile 'com.android.support:support-annotations:22.0.0'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'

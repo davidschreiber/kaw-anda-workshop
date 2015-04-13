@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentActivity;
 
 
 import at.technikumwien.anda.wienerlinien.R;
+import at.technikumwien.anda.wienerlinien.ui.fragment.LineDetailFragment;
+import at.technikumwien.anda.wienerlinien.ui.fragment.LineListFragment;
 
 /**
  * An activity representing a list of Lines. This activity
@@ -20,11 +22,11 @@ import at.technikumwien.anda.wienerlinien.R;
  * (if present) is a {@link LineDetailFragment}.
  * <p/>
  * This activity also implements the required
- * {@link LineListFragment.Callbacks} interface
+ * {@link LineListFragment.OnLineSelectedCallback} interface
  * to listen for item selections.
  */
 public class LineListActivity extends FragmentActivity
-    implements LineListFragment.Callbacks {
+    implements LineListFragment.OnLineSelectedCallback {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -55,11 +57,11 @@ public class LineListActivity extends FragmentActivity
     }
 
     /**
-     * Callback method from {@link LineListFragment.Callbacks}
+     * Callback method from {@link LineListFragment.OnLineSelectedCallback}
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onLineSelected(String id) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a

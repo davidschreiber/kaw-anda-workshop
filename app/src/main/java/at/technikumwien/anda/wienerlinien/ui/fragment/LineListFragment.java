@@ -1,6 +1,8 @@
-package at.technikumwien.anda.wienerlinien.ui.activity;
+package at.technikumwien.anda.wienerlinien.ui.fragment;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,11 +14,13 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import at.technikumwien.anda.wienerlinien.Database;
 import at.technikumwien.anda.wienerlinien.R;
-import at.technikumwien.anda.wienerlinien.model.Line;
+import at.technikumwien.anda.wienerlinien.data.model.Line;
+import at.technikumwien.anda.wienerlinien.data.provider.WienerLinienContentProvider;
+import at.technikumwien.anda.wienerlinien.ui.WienerLinienPresenter;
 
 /**
  * A list fragment representing a list of Lines. This fragment
@@ -24,10 +28,14 @@ import at.technikumwien.anda.wienerlinien.model.Line;
  * 'activated' state upon selection. This helps indicate which item is
  * currently being viewed in a {@link LineDetailFragment}.
  * <p/>
- * Activities containing this fragment MUST implement the {@link Callbacks}
+ * Activities containing this fragment MUST implement the {@link OnLineSelectedCallback}
  * interface.
  */
 public class LineListFragment extends ListFragment {
+
+    // =============================================================================
+    // Constants
+    // =============================================================================
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -36,37 +44,48 @@ public class LineListFragment extends ListFragment {
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
     /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
+     * A dummy implementation of the {@link OnLineSelectedCallback} interface that does
+     * nothing. Used only when this fragment is not attached to an activity.
      */
-    private Callbacks mCallbacks = sDummyCallbacks;
+    private static OnLineSelectedCallback dummyCallback = new OnLineSelectedCallback() {
+        @Override
+        public void onLineSelected(String id) {
+        }
+    };
+
+    // =============================================================================
+    // Private members
+    // =============================================================================
 
     /**
      * The current activated item position. Only used on tablets.
      */
-    private int mActivatedPosition = ListView.INVALID_POSITION;
+    private int activatedPosition = ListView.INVALID_POSITION;
 
     /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
+     * This callback is used to notify of when the user selected a line.
      */
-    public interface Callbacks {
+    private OnLineSelectedCallback lineSelectedCallback = dummyCallback;
+
+    // =============================================================================
+    // Public interfaces
+    // =============================================================================
+
+    /**
+     * The callback used to tell embedding activities that the user selected a line from the
+     * list.
+     */
+    public interface OnLineSelectedCallback {
+
         /**
          * Callback for when an item has been selected.
          */
-        void onItemSelected(String id);
+        void onLineSelected(String id);
     }
 
-    /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
-     */
-    private static Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onItemSelected(String id) {
-        }
-    };
+    // =============================================================================
+    // Constructor
+    // =============================================================================
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -75,15 +94,43 @@ public class LineListFragment extends ListFragment {
     public LineListFragment() {
     }
 
+    // =============================================================================
+    // Supertype overrides
+    // =============================================================================
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Create hard-coded list of lines
+        // Get the content resolver for accessing data.
+        ContentResolver cr = getActivity().getContentResolver();
 
+        // Define the requested data.
+        final String[] projection = {
+            WienerLinienContentProvider.LINE_KEYS.ID,
+            WienerLinienContentProvider.LINE_KEYS.NAME,
+            WienerLinienContentProvider.LINE_KEYS.SORT,
+            WienerLinienContentProvider.LINE_KEYS.REALTIME,
+            WienerLinienContentProvider.LINE_KEYS.TYPE,
+            WienerLinienContentProvider.LINE_KEYS.STAND,
+        };
+
+        // Query from the content provider.
+        final Cursor result = cr.query(WienerLinienContentProvider.LINES_URI, projection, null, null, null);
+
+        // Create line objects from the cursor result.
+        List<Line> lines = new ArrayList<>();
+
+        // As long as there are more lines, extract them from the cursor.
+        while (result.moveToNext()) {
+            lines.add(new Line(result.getLong(0), result.getString(1), result.getInt(2), result.getInt(3), Line.Type.valueOf(result.getString(4)), result.getString(5)));
+        }
+
+        // Cleanly close the cursor object.
+        result.close();
 
         // Create an set adapter for displaying the lines
-        LineAdapter adapter = new LineAdapter(Database.getInstance().getLines());
+        LineAdapter adapter = new LineAdapter(lines);
 
         // Provide list view with line adapter
         setListAdapter(adapter);
@@ -105,11 +152,11 @@ public class LineListFragment extends ListFragment {
         super.onAttach(activity);
 
         // Activities containing this fragment must implement its callbacks.
-        if (!(activity instanceof Callbacks)) {
+        if (!(activity instanceof OnLineSelectedCallback)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
 
-        mCallbacks = (Callbacks) activity;
+        lineSelectedCallback = (OnLineSelectedCallback) activity;
     }
 
     @Override
@@ -117,7 +164,7 @@ public class LineListFragment extends ListFragment {
         super.onDetach();
 
         // Reset the active callbacks interface to the dummy implementation.
-        mCallbacks = sDummyCallbacks;
+        lineSelectedCallback = dummyCallback;
     }
 
     @Override
@@ -128,9 +175,9 @@ public class LineListFragment extends ListFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mActivatedPosition != ListView.INVALID_POSITION) {
+        if (activatedPosition != ListView.INVALID_POSITION) {
             // Serialize and persist the activated item position.
-            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+            outState.putInt(STATE_ACTIVATED_POSITION, activatedPosition);
         }
     }
 
@@ -148,12 +195,12 @@ public class LineListFragment extends ListFragment {
 
     private void setActivatedPosition(int position) {
         if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
+            getListView().setItemChecked(activatedPosition, false);
         } else {
             getListView().setItemChecked(position, true);
         }
 
-        mActivatedPosition = position;
+        activatedPosition = position;
     }
 
     /**
@@ -209,10 +256,12 @@ public class LineListFragment extends ListFragment {
             view.setText(line.getName());
 
             // set line color
-            if(Build.VERSION.SDK_INT >= 16) {
-                view.setBackground(new ColorDrawable(line.getColor()));
+            final int lineBackground = WienerLinienPresenter.getBackgroundColorForLine(line);
+            if (Build.VERSION.SDK_INT >= 16) {
+                view.setBackground(new ColorDrawable(lineBackground));
             } else {
-                view.setBackgroundDrawable(new ColorDrawable(line.getColor()));
+                //noinspection deprecation
+                view.setBackgroundDrawable(new ColorDrawable(lineBackground));
             }
 
             return view;

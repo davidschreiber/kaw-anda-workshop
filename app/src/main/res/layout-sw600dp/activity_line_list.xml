@@ -16,7 +16,7 @@
 
     <fragment
         android:id="@+id/line_list"
-        android:name="at.technikumwien.anda.wienerlinien.ui.activity.LineListFragment"
+        android:name="at.technikumwien.anda.wienerlinien.ui.fragment.LineListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
