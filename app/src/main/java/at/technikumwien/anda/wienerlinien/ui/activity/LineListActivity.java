@@ -2,8 +2,7 @@ package at.technikumwien.anda.wienerlinien.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-
+import android.support.v7.app.ActionBarActivity;
 
 import at.technikumwien.anda.wienerlinien.R;
 import at.technikumwien.anda.wienerlinien.ui.fragment.LineDetailFragment;
@@ -25,7 +24,7 @@ import at.technikumwien.anda.wienerlinien.ui.fragment.LineListFragment;
  * {@link LineListFragment.OnLineSelectedCallback} interface
  * to listen for item selections.
  */
-public class LineListActivity extends FragmentActivity
+public class LineListActivity extends ActionBarActivity
     implements LineListFragment.OnLineSelectedCallback {
 
     /**
