@@ -30,7 +30,7 @@ public class LineListActivityTest extends ActivityInstrumentationTestCase2<LineL
     // Tests
     // =============================================================================
 
-    public void testLaunchActivity() {
+    public void testListExists() {
         assertThat(getActivity().findViewById(android.R.id.list)).isNotNull();
     }
 }
