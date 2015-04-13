@@ -18,7 +18,31 @@ public class Database {
     // Private members
     // =============================================================================
 
+    private static Database Singleton;
+
     private ArrayList<Line> lines;
+
+    // =============================================================================
+    // Constructor
+    // =============================================================================
+
+    /**
+     * Hidden constructor. @see
+     */
+    private Database() {
+    }
+
+    // =============================================================================
+    // Singleton getter
+    // =============================================================================
+
+    public static Database getInstance() {
+        if(Singleton == null) {
+            Singleton = new Database();
+        }
+
+        return Singleton;
+    }
 
     // =============================================================================
     // Public methods

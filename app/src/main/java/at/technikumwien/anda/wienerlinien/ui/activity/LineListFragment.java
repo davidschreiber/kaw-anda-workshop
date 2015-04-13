@@ -83,7 +83,7 @@ public class LineListFragment extends ListFragment {
 
 
         // Create an set adapter for displaying the lines
-        LineAdapter adapter = new LineAdapter(new Database().getLines());
+        LineAdapter adapter = new LineAdapter(Database.getInstance().getLines());
 
         // Provide list view with line adapter
         setListAdapter(adapter);
