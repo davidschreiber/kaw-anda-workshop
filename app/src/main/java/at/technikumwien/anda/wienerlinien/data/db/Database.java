@@ -1,4 +1,4 @@
-package at.technikumwien.anda.wienerlinien;
+package at.technikumwien.anda.wienerlinien.data.db;
 
 import android.graphics.Color;
 
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import at.technikumwien.anda.wienerlinien.model.Line;
-import at.technikumwien.anda.wienerlinien.model.Station;
+import at.technikumwien.anda.wienerlinien.data.model.Line;
+import at.technikumwien.anda.wienerlinien.data.model.Station;
 
 /**
  * In-memory mock database (will be replaced by real WienerLinien data at some point).

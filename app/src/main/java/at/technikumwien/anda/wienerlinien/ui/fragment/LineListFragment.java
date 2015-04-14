@@ -1,4 +1,4 @@
-package at.technikumwien.anda.wienerlinien.ui.activity;
+package at.technikumwien.anda.wienerlinien.ui.fragment;
 
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
@@ -14,9 +14,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import at.technikumwien.anda.wienerlinien.Database;
+import at.technikumwien.anda.wienerlinien.data.db.Database;
 import at.technikumwien.anda.wienerlinien.R;
-import at.technikumwien.anda.wienerlinien.model.Line;
+import at.technikumwien.anda.wienerlinien.data.model.Line;
 
 /**
  * A list fragment representing a list of Lines. This fragment

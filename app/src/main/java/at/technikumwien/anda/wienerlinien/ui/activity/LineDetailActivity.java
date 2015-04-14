@@ -7,6 +7,7 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
 import at.technikumwien.anda.wienerlinien.R;
+import at.technikumwien.anda.wienerlinien.ui.fragment.LineDetailFragment;
 
 /**
  * An activity representing a single Line detail screen. This

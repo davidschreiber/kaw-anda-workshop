@@ -1,4 +1,4 @@
-package at.technikumwien.anda.wienerlinien.model;
+package at.technikumwien.anda.wienerlinien.data.model;
 
 import java.util.List;
 

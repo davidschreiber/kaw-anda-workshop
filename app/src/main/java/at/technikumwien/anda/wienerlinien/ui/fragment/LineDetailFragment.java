@@ -1,4 +1,4 @@
-package at.technikumwien.anda.wienerlinien.ui.activity;
+package at.technikumwien.anda.wienerlinien.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import at.technikumwien.anda.wienerlinien.R;
+import at.technikumwien.anda.wienerlinien.ui.activity.LineDetailActivity;
+import at.technikumwien.anda.wienerlinien.ui.activity.LineListActivity;
 
 /**
  * A fragment representing a single Line detail screen.

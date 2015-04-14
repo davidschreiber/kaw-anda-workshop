@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentActivity;
 
 
 import at.technikumwien.anda.wienerlinien.R;
+import at.technikumwien.anda.wienerlinien.ui.fragment.LineDetailFragment;
+import at.technikumwien.anda.wienerlinien.ui.fragment.LineListFragment;
 
 /**
  * An activity representing a list of Lines. This activity
