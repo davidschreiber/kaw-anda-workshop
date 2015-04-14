@@ -11,17 +11,32 @@ public class Line {
     // Private members
     // =============================================================================
 
+    /**
+     * The unique identifier of this line.
+     */
+    private long id;
+
+    /**
+     * The name of this line (e.g. "U1").
+     */
     private String name;
 
+    /**
+     * The background color for this line.
+     */
     private int color;
 
+    /**
+     * A list of stations that this line consists of.
+     */
     private List<Station> stations;
 
     // =============================================================================
     // Constructor
     // =============================================================================
 
-    public Line(String name, int color, List<Station> stations) {
+    public Line(long id, String name, int color, List<Station> stations) {
+        this.id = id;
         this.name = name;
         this.color = color;
         this.stations = stations;
@@ -30,6 +45,10 @@ public class Line {
     // =============================================================================
     // Getters
     // =============================================================================
+
+    public long getId() {
+        return id;
+    }
 
     public String getName() {
         return name;

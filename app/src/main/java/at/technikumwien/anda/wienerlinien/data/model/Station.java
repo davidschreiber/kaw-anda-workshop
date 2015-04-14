@@ -8,6 +8,8 @@ public class Station {
     // Private members
     // =============================================================================
 
+    private long id;
+
     private String name;
 
     private long latitude;
@@ -23,7 +25,8 @@ public class Station {
     // Constructor
     // =============================================================================
 
-    public Station(String name, long latitude, long longitude, List<Line> transferLines) {
+    public Station(long id, String name, long latitude, long longitude, List<Line> transferLines) {
+        this.id = id;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -33,6 +36,10 @@ public class Station {
     // =============================================================================
     // Getter
     // =============================================================================
+
+    public long getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
