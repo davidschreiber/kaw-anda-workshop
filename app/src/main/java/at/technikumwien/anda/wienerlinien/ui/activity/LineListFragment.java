@@ -1,11 +1,11 @@
 package at.technikumwien.anda.wienerlinien.ui.activity;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +13,11 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import at.technikumwien.anda.wienerlinien.Database;
 import at.technikumwien.anda.wienerlinien.R;
 import at.technikumwien.anda.wienerlinien.model.Line;
-import at.technikumwien.anda.wienerlinien.ui.activity.dummy.DummyContent;
 
 /**
  * A list fragment representing a list of Lines. This fragment
@@ -57,7 +56,7 @@ public class LineListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        public void onItemSelected(long id);
     }
 
     /**
@@ -66,7 +65,9 @@ public class LineListFragment extends ListFragment {
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(long id) {
+            // do nothing
+            Log.d("TAG", "dummy callback handles click");
         }
     };
 
@@ -81,11 +82,9 @@ public class LineListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Create hard-coded list of lines
-
-
-        // Create an set adapter for displaying the lines
-        LineAdapter adapter = new LineAdapter(lines);
+        // Create and set adapter for displaying the lines
+        LineAdapter adapter =
+            new LineAdapter(Database.getInstance().getLines());
 
         // Provide list view with line adapter
         setListAdapter(adapter);
@@ -128,7 +127,7 @@ public class LineListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(id);
     }
 
     @Override
@@ -198,7 +197,7 @@ public class LineListFragment extends ListFragment {
         }
 
         @Override public long getItemId(int position) {
-            return position;
+            return getItem(position).getId();
         }
 
         @Override public View getView(int position, View convertView, ViewGroup parent) {

@@ -7,9 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import at.technikumwien.anda.wienerlinien.Database;
 import at.technikumwien.anda.wienerlinien.R;
-
-import at.technikumwien.anda.wienerlinien.ui.activity.dummy.DummyContent;
+import at.technikumwien.anda.wienerlinien.model.Line;
 
 /**
  * A fragment representing a single Line detail screen.
@@ -22,12 +22,12 @@ public class LineDetailFragment extends Fragment {
      * The fragment argument representing the item ID that this fragment
      * represents.
      */
-    public static final String ARG_ITEM_ID = "item_id";
+    public static final String ARG_LINE_ID = "line_id";
 
     /**
-     * The dummy content this fragment is presenting.
+     * The line this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
+    private Line line;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -40,11 +40,14 @@ public class LineDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
+        if (getArguments().containsKey(ARG_LINE_ID)) {
+            // Load the line specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            final long lineId = getArguments().getLong(ARG_LINE_ID);
+
+
+            line = Database.getInstance().getLine(lineId);
         }
     }
 
@@ -54,8 +57,8 @@ public class LineDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_line_detail, container, false);
 
         // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.line_detail)).setText(mItem.content);
+        if (line != null) {
+            ((TextView) rootView.findViewById(R.id.line_detail)).setText(line.getName());
         }
 
         return rootView;

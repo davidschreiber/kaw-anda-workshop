@@ -1,0 +1,419 @@
+Index: app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineListActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineListActivity.java	(revision 789fb96d3f2702c61045585070c60701b6347c58)
++++ app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineListActivity.java	(revision )
+@@ -59,13 +59,13 @@
+      * indicating that the item with the given ID was selected.
+      */
+     @Override
+-    public void onItemSelected(String id) {
++    public void onItemSelected(Long id) {
+         if (mTwoPane) {
+             // In two-pane mode, show the detail view in this activity by
+             // adding or replacing the detail fragment using a
+             // fragment transaction.
+             Bundle arguments = new Bundle();
+-            arguments.putString(LineDetailFragment.ARG_ITEM_ID, id);
++            arguments.putLong(LineDetailFragment.ARG_LINE_ID, id);
+             LineDetailFragment fragment = new LineDetailFragment();
+             fragment.setArguments(arguments);
+             getSupportFragmentManager().beginTransaction()
+@@ -76,7 +76,7 @@
+             // In single-pane mode, simply start the detail activity
+             // for the selected item ID.
+             Intent detailIntent = new Intent(this, LineDetailActivity.class);
+-            detailIntent.putExtra(LineDetailFragment.ARG_ITEM_ID, id);
++            detailIntent.putExtra(LineDetailFragment.ARG_LINE_ID, id);
+             startActivity(detailIntent);
+         }
+     }
+Index: app/src/main/res/layout/fragment_line_detail.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_line_detail.xml	(revision 789fb96d3f2702c61045585070c60701b6347c58)
++++ app/src/main/res/layout/fragment_line_detail.xml	(revision )
+@@ -1,5 +1,9 @@
+ <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/line_detail"
+-    style="?android:attr/textAppearanceLarge" android:layout_width="match_parent"
+-    android:layout_height="match_parent" android:padding="16dp" android:textIsSelectable="true"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:id="@+id/line_detail"
++    style="?android:attr/textAppearanceLarge"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:padding="16dp"
++    android:textIsSelectable="true"
+     tools:context="at.technikumwien.anda.wienerlinien.ui.activity.LineDetailFragment" />
+Index: app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineListFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineListFragment.java	(revision 789fb96d3f2702c61045585070c60701b6347c58)
++++ app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineListFragment.java	(revision )
+@@ -1,7 +1,6 @@
+ package at.technikumwien.anda.wienerlinien.ui.activity;
+ 
+ import android.app.Activity;
+-import android.graphics.Color;
+ import android.graphics.drawable.ColorDrawable;
+ import android.os.Build;
+ import android.os.Bundle;
+@@ -13,12 +12,11 @@
+ import android.widget.ListView;
+ import android.widget.TextView;
+ 
+-import java.util.ArrayList;
+ import java.util.List;
+ 
++import at.technikumwien.anda.wienerlinien.Database;
+ import at.technikumwien.anda.wienerlinien.R;
+ import at.technikumwien.anda.wienerlinien.model.Line;
+-import at.technikumwien.anda.wienerlinien.ui.activity.dummy.DummyContent;
+ 
+ /**
+  * A list fragment representing a list of Lines. This fragment
+@@ -57,7 +55,7 @@
+         /**
+          * Callback for when an item has been selected.
+          */
+-        public void onItemSelected(String id);
++        public void onItemSelected(Long id);
+     }
+ 
+     /**
+@@ -66,7 +64,7 @@
+      */
+     private static Callbacks sDummyCallbacks = new Callbacks() {
+         @Override
+-        public void onItemSelected(String id) {
++        public void onItemSelected(Long id) {
+         }
+     };
+ 
+@@ -81,11 +79,8 @@
+     public void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+ 
+-        // Create hard-coded list of lines
+-
+-
+         // Create an set adapter for displaying the lines
+-        LineAdapter adapter = new LineAdapter(lines);
++        LineAdapter adapter = new LineAdapter(Database.getInstance().getLines());
+ 
+         // Provide list view with line adapter
+         setListAdapter(adapter);
+@@ -128,7 +123,7 @@
+ 
+         // Notify the active callbacks interface (the activity, if the
+         // fragment is attached to one) that an item has been selected.
+-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
++        mCallbacks.onItemSelected(Database.getInstance().getLines().get(position).getId());
+     }
+ 
+     @Override
+Index: app/src/main/java/at/technikumwien/anda/wienerlinien/model/Line.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/at/technikumwien/anda/wienerlinien/model/Line.java	(revision 789fb96d3f2702c61045585070c60701b6347c58)
++++ app/src/main/java/at/technikumwien/anda/wienerlinien/model/Line.java	(revision )
+@@ -11,6 +11,8 @@
+     // Private members
+     // =============================================================================
+ 
++    private long id;
++
+     private String name;
+ 
+     private int color;
+@@ -21,7 +23,8 @@
+     // Constructor
+     // =============================================================================
+ 
+-    public Line(String name, int color, List<Station> stations) {
++    public Line(long id, String name, int color, List<Station> stations) {
++        this.id = id;
+         this.name = name;
+         this.color = color;
+         this.stations = stations;
+@@ -30,6 +33,10 @@
+     // =============================================================================
+     // Getters
+     // =============================================================================
++
++    public long getId() {
++        return id;
++    }
+ 
+     public String getName() {
+         return name;
+Index: app/src/main/java/at/technikumwien/anda/wienerlinien/Database.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/at/technikumwien/anda/wienerlinien/Database.java	(revision 789fb96d3f2702c61045585070c60701b6347c58)
++++ app/src/main/java/at/technikumwien/anda/wienerlinien/Database.java	(revision )
+@@ -18,12 +18,40 @@
+     // Private members
+     // =============================================================================
+ 
++    private static Database Singleton;
++
+     private ArrayList<Line> lines;
+ 
+     // =============================================================================
++    // Constructors
++    // =============================================================================
++
++    private Database() {
++
++    }
++
++    public static Database getInstance() {
++        if (Singleton == null) Singleton = new Database();
++        return Singleton;
++    }
++
++    // =============================================================================
+     // Public methods
+     // =============================================================================
+ 
++    /**
++     * Returns the line with the given <code>id</code> or <code>null</code> if no line was found.
++     */
++    public Line getLine(Long id) {
++        for (Line line : lines) {
++            if (line.getId() == id) {
++                return line;
++            }
++        }
++
++        return null;
++    }
++
+     public List<Line> getLines() {
+         if (lines == null) {
+             lines = new ArrayList<>();
+@@ -40,12 +68,12 @@
+             u1Stations.add(new Station("Leopoldau", 0, 0, null));
+ 
+             // Create the line U1 and add it's stations
+-            final Line u1 = new Line("U1", Color.parseColor("#E20A16"), u1Stations);
++            final Line u1 = new Line(0L, "U1", Color.parseColor("#E20A16"), u1Stations);
+ 
+             // Create lines u2, u3 and u4 without stations
+-            final Line u2 = new Line("U2", Color.parseColor("#764785"), null);
+-            final Line u3 = new Line("U3", Color.parseColor("#F76013"), null);
+-            final Line u4 = new Line("U4", Color.parseColor("#008131"), null);
++            final Line u2 = new Line(1L, "U2", Color.parseColor("#764785"), null);
++            final Line u3 = new Line(2L, "U3", Color.parseColor("#F76013"), null);
++            final Line u4 = new Line(3L, "U4", Color.parseColor("#008131"), null);
+ 
+             // Create a list of stations for line U6
+             ArrayList<Station> u6Stations = new ArrayList<>();
+@@ -57,10 +85,10 @@
+ 
+ 
+             // Create line U6 with its stations
+-            final Line u6 = new Line("U6", Color.parseColor("#88471F"), u6Stations);
++            final Line u6 = new Line(4L, "U6", Color.parseColor("#88471F"), u6Stations);
+ 
+             // Create line 31
+-            final Line tram31 = new Line("31", Color.parseColor("#999999"), null);
++            final Line tram31 = new Line(5L, "31", Color.parseColor("#999999"), null);
+ 
+ 
+             // add all lines to the mock database
+Index: app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineDetailActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineDetailActivity.java	(revision 789fb96d3f2702c61045585070c60701b6347c58)
++++ app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineDetailActivity.java	(revision )
+@@ -40,8 +40,8 @@
+             // Create the detail fragment and add it to the activity
+             // using a fragment transaction.
+             Bundle arguments = new Bundle();
+-            arguments.putString(LineDetailFragment.ARG_ITEM_ID,
+-                getIntent().getStringExtra(LineDetailFragment.ARG_ITEM_ID));
++            arguments.putLong(LineDetailFragment.ARG_LINE_ID,
++                getIntent().getLongExtra(LineDetailFragment.ARG_LINE_ID, 0));
+             LineDetailFragment fragment = new LineDetailFragment();
+             fragment.setArguments(arguments);
+             getSupportFragmentManager().beginTransaction()
+Index: app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/dummy/DummyContent.java
+===================================================================
+--- app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/dummy/DummyContent.java	(revision 789fb96d3f2702c61045585070c60701b6347c58)
++++ app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/dummy/DummyContent.java	(revision 789fb96d3f2702c61045585070c60701b6347c58)
+@@ -1,55 +0,0 @@
+-package at.technikumwien.anda.wienerlinien.ui.activity.dummy;
+-
+-import java.util.ArrayList;
+-import java.util.HashMap;
+-import java.util.List;
+-import java.util.Map;
+-
+-/**
+- * Helper class for providing sample content for user interfaces created by
+- * Android template wizards.
+- * <p/>
+- * TODO: Replace all uses of this class before publishing your app.
+- */
+-public class DummyContent {
+-
+-    /**
+-     * An array of sample (dummy) items.
+-     */
+-    public static List<DummyItem> ITEMS = new ArrayList<DummyItem>();
+-
+-    /**
+-     * A map of sample (dummy) items, by ID.
+-     */
+-    public static Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
+-
+-    static {
+-        // Add 3 sample items.
+-        addItem(new DummyItem("1", "Item 1"));
+-        addItem(new DummyItem("2", "Item 2"));
+-        addItem(new DummyItem("3", "Item 3"));
+-    }
+-
+-    private static void addItem(DummyItem item) {
+-        ITEMS.add(item);
+-        ITEM_MAP.put(item.id, item);
+-    }
+-
+-    /**
+-     * A dummy item representing a piece of content.
+-     */
+-    public static class DummyItem {
+-        public String id;
+-        public String content;
+-
+-        public DummyItem(String id, String content) {
+-            this.id = id;
+-            this.content = content;
+-        }
+-
+-        @Override
+-        public String toString() {
+-            return content;
+-        }
+-    }
+-}
+Index: app/app.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/app.iml	(revision 789fb96d3f2702c61045585070c60701b6347c58)
++++ app/app.iml	(revision )
+@@ -86,8 +86,8 @@
+     </content>
+     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
++    <orderEntry type="library" exported="" name="appcompat-v7-22.0.0" level="project" />
+     <orderEntry type="library" exported="" name="support-v4-22.0.0" level="project" />
+     <orderEntry type="library" exported="" name="support-annotations-22.0.0" level="project" />
+-    <orderEntry type="library" exported="" name="appcompat-v7-22.0.0" level="project" />
+   </component>
+ </module>
+\ No newline at end of file
+Index: app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineDetailFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineDetailFragment.java	(revision 789fb96d3f2702c61045585070c60701b6347c58)
++++ app/src/main/java/at/technikumwien/anda/wienerlinien/ui/activity/LineDetailFragment.java	(revision )
+@@ -7,10 +7,10 @@
+ import android.view.ViewGroup;
+ import android.widget.TextView;
+ 
++import at.technikumwien.anda.wienerlinien.Database;
+ import at.technikumwien.anda.wienerlinien.R;
++import at.technikumwien.anda.wienerlinien.model.Line;
+ 
+-import at.technikumwien.anda.wienerlinien.ui.activity.dummy.DummyContent;
+-
+ /**
+  * A fragment representing a single Line detail screen.
+  * This fragment is either contained in a {@link LineListActivity}
+@@ -18,17 +18,26 @@
+  * on handsets.
+  */
+ public class LineDetailFragment extends Fragment {
+-    /**
+-     * The fragment argument representing the item ID that this fragment
+-     * represents.
+-     */
+-    public static final String ARG_ITEM_ID = "item_id";
+ 
++    // =============================================================================
++    // Constants
++    // =============================================================================
++
+     /**
+-     * The dummy content this fragment is presenting.
++     * The argument name holding the ID of the line which should be displayed.
+      */
+-    private DummyContent.DummyItem mItem;
++    public static final String ARG_LINE_ID = "lineId";
+ 
++    // =============================================================================
++    // Private members
++    // =============================================================================
++
++    private Line line;
++
++    // =============================================================================
++    // Constructor
++    // =============================================================================
++
+     /**
+      * Mandatory empty constructor for the fragment manager to instantiate the
+      * fragment (e.g. upon screen orientation changes).
+@@ -36,15 +45,16 @@
+     public LineDetailFragment() {
+     }
+ 
++    // =============================================================================
++    // Supertype overrides
++    // =============================================================================
++
+     @Override
+     public void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+ 
+-        if (getArguments().containsKey(ARG_ITEM_ID)) {
+-            // Load the dummy content specified by the fragment
+-            // arguments. In a real-world scenario, use a Loader
+-            // to load content from a content provider.
+-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
++        if (getArguments().containsKey(ARG_LINE_ID)) {
++            line = Database.getInstance().getLine(getArguments().getLong(ARG_LINE_ID));
+         }
+     }
+ 
+@@ -54,8 +64,8 @@
+         View rootView = inflater.inflate(R.layout.fragment_line_detail, container, false);
+ 
+         // Show the dummy content as text in a TextView.
+-        if (mItem != null) {
+-            ((TextView) rootView.findViewById(R.id.line_detail)).setText(mItem.content);
++        if (line != null) {
++            ((TextView) rootView.findViewById(R.id.line_detail)).setText(line.getName());
+         }
+ 
+         return rootView;

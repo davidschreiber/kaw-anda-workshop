@@ -11,6 +11,8 @@ public class Line {
     // Private members
     // =============================================================================
 
+    private long id;
+
     private String name;
 
     private int color;
@@ -21,7 +23,8 @@ public class Line {
     // Constructor
     // =============================================================================
 
-    public Line(String name, int color, List<Station> stations) {
+    public Line(long id, String name, int color, List<Station> stations) {
+        this.id = id;
         this.name = name;
         this.color = color;
         this.stations = stations;
@@ -30,6 +33,10 @@ public class Line {
     // =============================================================================
     // Getters
     // =============================================================================
+
+    public long getId() {
+        return id;
+    }
 
     public String getName() {
         return name;

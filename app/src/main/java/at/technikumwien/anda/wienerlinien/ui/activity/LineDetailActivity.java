@@ -40,8 +40,8 @@ public class LineDetailActivity extends ActionBarActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(LineDetailFragment.ARG_ITEM_ID,
-                getIntent().getStringExtra(LineDetailFragment.ARG_ITEM_ID));
+            arguments.putString(LineDetailFragment.ARG_LINE_ID,
+                getIntent().getStringExtra(LineDetailFragment.ARG_LINE_ID));
             LineDetailFragment fragment = new LineDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
